@@ -1,0 +1,68 @@
+{
+  "templates": [
+    {
+      "name": "Mutual Non-Disclosure Agreement",
+      "description": "Standard MNDA template enabling parties to share sensitive information securely. Created by a committee of over 40 attorneys representing technology vendors, procurement teams, boutique firms, and Big Law.",
+      "filename": "Mutual-NDA.md"
+    },
+    {
+      "name": "Mutual NDA Cover Page",
+      "description": "Cover page template for the Mutual Non-Disclosure Agreement. Includes signature blocks and key terms customization fields.",
+      "filename": "Mutual-NDA-coverpage.md"
+    },
+    {
+      "name": "Professional Services Agreement",
+      "description": "Comprehensive services agreement covering service delivery, intellectual property, privacy, payments, termination, warranties, liability limits, and indemnification for professional service engagements.",
+      "filename": "psa.md"
+    },
+    {
+      "name": "Cloud Service Agreement",
+      "description": "Standard agreement for selling and buying cloud software and SaaS products. Covers service access, usage rights, privacy, security, payment, term, warranties, liability, indemnification, and confidentiality.",
+      "filename": "CSA.md"
+    },
+    {
+      "name": "AI Addendum",
+      "description": "Addendum template addressing AI-specific provisions including AI service usage, input/output ownership, model training restrictions, intellectual property, and AI-generated content disclaimers.",
+      "filename": "AI-Addendum.md"
+    },
+    {
+      "name": "Business Associate Agreement",
+      "description": "HIPAA-compliant agreement establishing obligations between a Provider and Company regarding Protected Health Information (PHI) handling, privacy safeguards, breach notification, and compliance requirements.",
+      "filename": "BAA.md"
+    },
+    {
+      "name": "Data Processing Agreement",
+      "description": "GDPR-compliant data processing agreement covering processor/subprocessor relationships, data processing details, restricted transfers, security incident response, audit rights, and data deletion procedures.",
+      "filename": "DPA.md"
+    },
+    {
+      "name": "Design Partner Agreement",
+      "description": "Agreement for early product access and design partnership. Governs feedback ownership, product improvement rights, confidentiality, intellectual property, and program termination.",
+      "filename": "design-partner-agreement.md"
+    },
+    {
+      "name": "Pilot Agreement",
+      "description": "Short-term contract for prospective customers to test a product or service before committing to longer-term deals. Includes usage rights, term flexibility, and evaluation provisions.",
+      "filename": "Pilot-Agreement.md"
+    },
+    {
+      "name": "Partnership Agreement",
+      "description": "Agreement for strategic partnerships covering cooperation, payment, trademark licensing, privacy, escalation procedures, termination, warranties, liability, indemnification, and confidentiality.",
+      "filename": "Partnership-Agreement.md"
+    },
+    {
+      "name": "Service Level Agreement",
+      "description": "Agreement defining service performance metrics including target uptime, response time commitments, service credits, and remedies for performance failures.",
+      "filename": "sla.md"
+    },
+    {
+      "name": "Software License Agreement",
+      "description": "Comprehensive agreement for software licensing covering installation, usage rights, user accounts, feedback, machine learning usage, updates, payment, termination, warranties, liability, and indemnification.",
+      "filename": "Software-License-Agreement.md"
+    }
+  ],
+  "license": "CC BY 4.0",
+  "source": "https://github.com/CommonPaper",
+  "description": "Dataset of legal agreement templates from Common Paper, freely available under CC BY 4.0 license.",
+  "lastUpdated": "2026-05-05"
+}
