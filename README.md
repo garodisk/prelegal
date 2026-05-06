@@ -15,7 +15,3 @@ Instructions for getting started will be added as the project progresses.
 ## Contributing
 
 This project is in progress. More details coming soon.
-
-## License
-
-TBD
