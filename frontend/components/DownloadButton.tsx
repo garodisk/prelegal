@@ -7,6 +7,7 @@ interface Props {
   formValues: Record<string, string>;
   standardTerms: string;
   isLoading: boolean;
+  onSave?: () => Promise<void>;
 }
 
 const DOC_NAMES: Record<string, string> = {
@@ -81,7 +82,7 @@ function buildTermsHtml(templateText: string, fv: Record<string, string>): strin
 const PRINT_STYLES = `
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: Georgia, "Times New Roman", serif; font-size: 11pt; color: #1e293b; background: white; }
-  .header { background: #1e293b; color: white; text-align: center; padding: 32px 40px; }
+  .header { background: #032147; color: white; text-align: center; padding: 32px 40px; }
   .header .eyebrow { font-family: Arial, sans-serif; font-size: 8pt; letter-spacing: 0.25em; text-transform: uppercase; color: #94a3b8; margin-bottom: 8px; }
   .header h1 { font-size: 14pt; font-weight: bold; letter-spacing: 0.1em; text-transform: uppercase; }
   .header .sub { font-family: Arial, sans-serif; font-size: 8pt; color: #94a3b8; margin-top: 6px; }
@@ -103,6 +104,7 @@ const PRINT_STYLES = `
   .terms ul, .terms ol { margin: 6px 0; padding-left: 20px; }
   .terms li { margin: 3px 0; line-height: 1.6; }
   .footer { text-align: center; padding: 16px 40px; border-top: 1px solid #e2e8f0; font-family: Arial, sans-serif; font-size: 8pt; color: #94a3b8; }
+  .disclaimer { border: 1px solid #ecad0a; background: #fdf8e7; color: #032147; font-family: Arial, sans-serif; font-size: 8pt; padding: 8px 40px; text-align: center; }
   @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
 `;
 
@@ -192,7 +194,7 @@ function buildGenericCoverHtml(fv: Record<string, string>, docType: string): str
   </div>`;
 }
 
-export default function DownloadButton({ formValues: fv, standardTerms, isLoading }: Props) {
+export default function DownloadButton({ formValues: fv, standardTerms, isLoading, onSave }: Props) {
   const [isDownloading, setIsDownloading] = useState(false);
   const docType = fv.document_type || '';
   const docName = DOC_NAMES[docType] || 'Legal Agreement';
@@ -222,18 +224,19 @@ export default function DownloadButton({ formValues: fv, standardTerms, isLoadin
     <h1>${docName}</h1>
     <p class="sub">Standard Terms Version 1.0</p>
   </div>
+  <div class="disclaimer">AI-generated from a template. Not legal advice. Consult a licensed attorney before use.</div>
   ${coverHtml}
   <div class="terms">
     <p class="section-label">Standard Terms</p>
     ${termsHtml}
   </div>
-  <div class="footer">Common Paper · Free to use under CC BY 4.0</div>
+  <div class="footer">Common Paper · Free to use under CC BY 4.0 · AI-generated from template — not legal advice</div>
 </body>
 </html>`);
 
       printWindow.document.close();
       printWindow.focus();
-      setTimeout(() => { printWindow.print(); printWindow.close(); }, 300);
+      setTimeout(() => { printWindow.print(); printWindow.close(); onSave?.(); }, 300);
     } finally {
       setIsDownloading(false);
     }
@@ -243,7 +246,7 @@ export default function DownloadButton({ formValues: fv, standardTerms, isLoadin
     <button
       onClick={handlePrint}
       disabled={isLoading || isDownloading || !docType}
-      className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      className="flex items-center gap-2 px-4 py-2 bg-[#753991] text-white text-sm font-medium rounded-md hover:bg-[#6b3384] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
     >
       {isDownloading ? (
         <>

@@ -92,8 +92,8 @@ export default function ChatSection({ onFormChange }: Props) {
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className="px-5 py-3 bg-gray-50 border-b border-gray-100 sticky top-0 z-10">
-        <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-widest">AI Assistant</p>
-        <p className="text-[11px] text-gray-400 mt-0.5">Chat to fill the document</p>
+        <p className="text-[11px] font-semibold text-[#032147] uppercase tracking-widest">AI Assistant</p>
+        <p className="text-[11px] text-[#888888] mt-0.5">Chat to fill the document</p>
       </div>
 
       {/* Messages */}
@@ -103,7 +103,7 @@ export default function ChatSection({ onFormChange }: Props) {
             <div
               className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm leading-relaxed ${
                 msg.role === 'user'
-                  ? 'bg-blue-600 text-white rounded-br-sm'
+                  ? 'bg-[#209dd7] text-white rounded-br-sm'
                   : 'bg-gray-100 text-gray-800 rounded-bl-sm'
               }`}
             >
@@ -135,12 +135,12 @@ export default function ChatSection({ onFormChange }: Props) {
             onKeyDown={handleKey}
             disabled={loading}
             placeholder="Type a message..."
-            className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 transition-colors"
+            className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#209dd7] focus:border-[#209dd7] disabled:opacity-50 transition-colors"
           />
           <button
             onClick={send}
             disabled={loading || !input.trim()}
-            className="px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="px-3 py-2 bg-[#209dd7] text-white text-sm rounded-lg hover:bg-[#1b8ec0] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             Send
           </button>
