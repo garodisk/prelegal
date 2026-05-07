@@ -1,10 +1,15 @@
 import os
 from contextlib import asynccontextmanager
 
+from dotenv import load_dotenv
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from database import init_db
+from routers.chat import router as chat_router
+
+load_dotenv()
 
 
 @asynccontextmanager
@@ -15,11 +20,20 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://localhost:3001"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 @app.get("/api/health")
 def health():
     return {"status": "ok"}
 
+
+app.include_router(chat_router, prefix="/api/chat")
 
 static_dir = os.environ.get(
     "STATIC_DIR",
