@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
-import FormSection from '@/components/FormSection';
+import ChatSection from '@/components/ChatSection';
 import NDAPreview from '@/components/NDAPreview';
 import DownloadButton from '@/components/DownloadButton';
 
@@ -43,8 +43,8 @@ export default function Home() {
       {/* Two-column layout */}
       <div className="flex flex-1 overflow-hidden">
         {/* Left panel */}
-        <div className="w-80 xl:w-96 bg-white border-r border-gray-200 overflow-y-auto shrink-0">
-          <FormSection onFormChange={handleFormChange} />
+        <div className="w-80 xl:w-96 bg-white border-r border-gray-200 flex flex-col shrink-0">
+          <ChatSection onFormChange={handleFormChange} />
         </div>
 
         {/* Right panel */}
