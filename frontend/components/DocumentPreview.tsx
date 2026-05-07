@@ -86,6 +86,19 @@ function buildTemplateHtml(templateText: string, fv: Record<string, string>): st
   return t;
 }
 
+function DisclaimerBanner() {
+  return (
+    <div className="flex items-start gap-2 px-5 py-2.5 bg-[#ecad0a]/10 border-b border-[#ecad0a] text-[#032147] font-sans">
+      <svg className="w-3.5 h-3.5 mt-0.5 shrink-0 text-[#ecad0a]" fill="currentColor" viewBox="0 0 20 20">
+        <path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+      </svg>
+      <p className="text-[10px] leading-relaxed">
+        <strong>Draft only.</strong> This document is AI-generated from a template and has not been reviewed by a licensed attorney. Do not use as legal advice.
+      </p>
+    </div>
+  );
+}
+
 // ---- NDA-specific cover page ----
 
 function NDABody({ fv, termsHtml }: { fv: Record<string, string>; termsHtml: string }) {
@@ -104,6 +117,7 @@ function NDABody({ fv, termsHtml }: { fv: Record<string, string>; termsHtml: str
 
   return (
     <>
+      <DisclaimerBanner />
       <div className="px-10 py-8 bg-slate-50 border-b-2 border-slate-200">
         <p className="text-[9px] font-sans font-bold uppercase tracking-[0.2em] text-slate-400 mb-6">Cover Page</p>
         <div className="grid grid-cols-2 gap-x-10 gap-y-5 mb-8">
@@ -241,7 +255,7 @@ function TermsSection({ html }: { html: string }) {
         dangerouslySetInnerHTML={{ __html: html }}
       />
       <div className="mt-10 pt-5 border-t border-slate-100 text-center">
-        <p className="text-[10px] font-sans text-slate-400">Common Paper · Free to use under CC BY 4.0</p>
+        <p className="text-[10px] font-sans text-slate-400">Common Paper · CC BY 4.0 · AI-generated from template — not legal advice</p>
       </div>
     </div>
   );
@@ -254,6 +268,7 @@ function GenericBody({ fv, termsHtml, docType }: { fv: Record<string, string>; t
 
   return (
     <>
+      <DisclaimerBanner />
       <div className="px-10 py-8 bg-slate-50 border-b-2 border-slate-200">
         <p className="text-[9px] font-sans font-bold uppercase tracking-[0.2em] text-slate-400 mb-6">Key Terms</p>
         <div className="grid grid-cols-2 gap-x-10 gap-y-5">
@@ -297,7 +312,7 @@ export default function DocumentPreview({ formValues: fv, templateText, isLoadin
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin h-7 w-7 border-2 border-blue-500 border-t-transparent rounded-full" />
+        <div className="animate-spin h-7 w-7 border-2 border-[#209dd7] border-t-transparent rounded-full" />
       </div>
     );
   }
@@ -306,7 +321,7 @@ export default function DocumentPreview({ formValues: fv, templateText, isLoadin
     return (
       <div className="max-w-[760px] mx-auto">
         <div className="bg-white shadow-2xl rounded-lg overflow-hidden" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>
-          <div className="bg-slate-800 text-white px-10 py-7 text-center">
+          <div className="bg-[#032147] text-white px-10 py-7 text-center">
             <p className="text-[10px] font-sans tracking-[0.3em] uppercase text-slate-400 mb-2">Common Paper</p>
             <h1 className="text-base font-bold tracking-[0.12em] uppercase text-white">Legal Agreement Creator</h1>
           </div>
@@ -321,7 +336,7 @@ export default function DocumentPreview({ formValues: fv, templateText, isLoadin
   return (
     <div className="max-w-[760px] mx-auto">
       <div className="bg-white shadow-2xl rounded-lg overflow-hidden" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>
-        <div className="bg-slate-800 text-white px-10 py-7 text-center">
+        <div className="bg-[#032147] text-white px-10 py-7 text-center">
           <p className="text-[10px] font-sans tracking-[0.3em] uppercase text-slate-400 mb-2">Common Paper</p>
           <h1 className="text-base font-bold tracking-[0.12em] uppercase text-white">{docName}</h1>
           <p className="text-[11px] text-slate-400 mt-1.5 font-sans">Standard Terms Version 1.0</p>

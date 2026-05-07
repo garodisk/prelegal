@@ -7,7 +7,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from database import init_db
+from routers.auth import router as auth_router
 from routers.chat import router as chat_router
+from routers.documents import router as documents_router
 
 load_dotenv()
 
@@ -33,7 +35,9 @@ def health():
     return {"status": "ok"}
 
 
+app.include_router(auth_router, prefix="/api/auth")
 app.include_router(chat_router, prefix="/api/chat")
+app.include_router(documents_router, prefix="/api/documents")
 
 static_dir = os.environ.get(
     "STATIC_DIR",

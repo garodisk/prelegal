@@ -3,8 +3,10 @@ name = "prelegal-backend"
 version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
+    "bcrypt>=5.0.0",
     "fastapi>=0.115.0",
     "litellm>=1.83.14",
     "python-dotenv>=1.2.2",
+    "python-jose[cryptography]>=3.5.0",
     "uvicorn[standard]>=0.32.0",
 ]
