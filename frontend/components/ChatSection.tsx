@@ -7,21 +7,16 @@ interface Message {
   content: string;
 }
 
-interface NDAFields {
-  party1_name?: string;
-  party1_title?: string;
-  party1_company?: string;
-  party1_email?: string;
-  party2_name?: string;
-  party2_title?: string;
-  party2_company?: string;
-  party2_email?: string;
-  purpose?: string;
-  effective_date?: string;
-  mnda_term_years?: string;
-  governing_law?: string;
-  jurisdiction?: string;
-}
+const ALL_FIELD_KEYS = [
+  'document_type',
+  'party1_name', 'party1_title', 'party1_company', 'party1_email',
+  'party2_name', 'party2_title', 'party2_company', 'party2_email',
+  'customer_name', 'provider_name',
+  'effective_date', 'governing_law', 'jurisdiction',
+  'purpose', 'mnda_term_years',
+  'subscription_period', 'pilot_period', 'general_cap_amount',
+  'services_description', 'payment_terms', 'uptime_target',
+] as const;
 
 interface Props {
   onFormChange: (values: Record<string, string>) => void;
@@ -31,7 +26,7 @@ export default function ChatSection({ onFormChange }: Props) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [fields, setFields] = useState<NDAFields>({});
+  const [fields, setFields] = useState<Record<string, string>>({});
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -73,17 +68,12 @@ export default function ChatSection({ onFormChange }: Props) {
 
       setMessages(prev => [...prev, { role: 'assistant', content: data.reply }]);
 
-      const newFields: NDAFields = { ...fields };
-      const fieldKeys: (keyof NDAFields)[] = [
-        'party1_name', 'party1_title', 'party1_company', 'party1_email',
-        'party2_name', 'party2_title', 'party2_company', 'party2_email',
-        'purpose', 'effective_date', 'mnda_term_years', 'governing_law', 'jurisdiction',
-      ];
-      for (const key of fieldKeys) {
+      const newFields = { ...fields };
+      for (const key of ALL_FIELD_KEYS) {
         if (data[key] != null) newFields[key] = data[key];
       }
       setFields(newFields);
-      onFormChange(newFields as Record<string, string>);
+      onFormChange(newFields);
     } catch {
       setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, something went wrong. Please try again.' }]);
     } finally {

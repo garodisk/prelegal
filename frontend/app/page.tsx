@@ -1,21 +1,43 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import ChatSection from '@/components/ChatSection';
-import NDAPreview from '@/components/NDAPreview';
+import DocumentPreview from '@/components/DocumentPreview';
 import DownloadButton from '@/components/DownloadButton';
 
+const TEMPLATE_MAP: Record<string, string> = {
+  'Mutual-NDA': '/templates/Mutual-NDA.md',
+  'CSA': '/templates/CSA.md',
+  'Pilot-Agreement': '/templates/Pilot-Agreement.md',
+  'psa': '/templates/psa.md',
+  'design-partner-agreement': '/templates/design-partner-agreement.md',
+  'sla': '/templates/sla.md',
+  'Software-License-Agreement': '/templates/Software-License-Agreement.md',
+  'DPA': '/templates/DPA.md',
+  'BAA': '/templates/BAA.md',
+  'AI-Addendum': '/templates/AI-Addendum.md',
+  'Partnership-Agreement': '/templates/Partnership-Agreement.md',
+};
+
 export default function Home() {
-  const [standardTerms, setStandardTerms] = useState('');
+  const [templateText, setTemplateText] = useState('');
   const [formValues, setFormValues] = useState<Record<string, string>>({});
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const loadedDocType = useRef('');
+
+  const docType = formValues.document_type || '';
 
   useEffect(() => {
-    fetch('/templates/Mutual-NDA.md')
+    if (!docType || docType === loadedDocType.current) return;
+    const path = TEMPLATE_MAP[docType];
+    if (!path) return;
+    setIsLoading(true);
+    fetch(path)
       .then(r => r.text())
-      .then(text => { setStandardTerms(text); setIsLoading(false); })
-      .catch(() => setIsLoading(false));
-  }, []);
+      .then(text => { setTemplateText(text); loadedDocType.current = docType; })
+      .catch(() => {})
+      .finally(() => setIsLoading(false));
+  }, [docType]);
 
   const handleFormChange = useCallback((values: Record<string, string>) => {
     setFormValues(values);
@@ -33,11 +55,11 @@ export default function Home() {
             </svg>
           </div>
           <div>
-            <h1 className="text-sm font-semibold text-gray-900 leading-none">Mutual NDA Creator</h1>
-            <p className="text-xs text-gray-400 mt-0.5">Common Paper Standard Terms v1.0</p>
+            <h1 className="text-sm font-semibold text-gray-900 leading-none">Legal Agreement Creator</h1>
+            <p className="text-xs text-gray-400 mt-0.5">Common Paper Standard Terms</p>
           </div>
         </div>
-        <DownloadButton formValues={formValues} standardTerms={standardTerms} isLoading={isLoading} />
+        <DownloadButton formValues={formValues} standardTerms={templateText} isLoading={isLoading} />
       </header>
 
       {/* Two-column layout */}
@@ -49,7 +71,7 @@ export default function Home() {
 
         {/* Right panel */}
         <div className="flex-1 overflow-y-auto bg-slate-100 py-8 px-6">
-          <NDAPreview formValues={formValues} standardTerms={standardTerms} isLoading={isLoading} />
+          <DocumentPreview formValues={formValues} templateText={templateText} isLoading={isLoading} />
         </div>
       </div>
     </div>

@@ -6,30 +6,63 @@ from litellm import completion
 MODEL = "openrouter/openai/gpt-oss-120b"
 EXTRA_BODY = {"provider": {"order": ["cerebras"]}}
 
-SYSTEM_PROMPT = """You are a friendly legal assistant helping users fill out a Mutual Non-Disclosure Agreement (MNDA).
+SUPPORTED_DOCS = """
+- Mutual-NDA: Mutual Non-Disclosure Agreement
+- CSA: Cloud Service Agreement
+- Pilot-Agreement: Pilot Agreement
+- psa: Professional Services Agreement
+- design-partner-agreement: Design Partner Agreement
+- sla: Service Level Agreement
+- Software-License-Agreement: Software License Agreement
+- DPA: Data Processing Agreement
+- BAA: Business Associate Agreement
+- AI-Addendum: AI Addendum
+- Partnership-Agreement: Partnership Agreement
+"""
 
-Your job is to have a natural, conversational chat to gather the following information. Ask for one or two things at a time — do not dump all questions at once.
+SYSTEM_PROMPT = f"""You are a friendly legal assistant helping users create legal agreements.
 
-Fields you need to collect:
-- party1_name: Full name of the first party (the user)
-- party1_title: Title/designation of the first party
-- party1_company: Company name of the first party
-- party1_email: Email of the first party
-- party2_name: Full name of the second party (counterparty)
-- party2_title: Title/designation of the second party
-- party2_company: Company name of the second party
-- party2_email: Email of the second party
-- purpose: The business purpose of the NDA (e.g. "Evaluating a potential business relationship")
-- effective_date: Date the agreement becomes effective (format: YYYY-MM-DD)
-- mnda_term_years: How many years the NDA lasts (a number like "1" or "2")
-- governing_law: The US state whose laws govern the agreement (e.g. "California")
-- jurisdiction: The city and state for dispute resolution (e.g. "San Francisco, CA")
+## Supported document types (use exact key as document_type value)
+{SUPPORTED_DOCS}
 
-In your structured response:
-- Include your conversational reply in the `reply` field
-- For each field, include the value if it has been established from the conversation, or null if not yet known
-- Always carry forward previously established values — do not set them back to null
-- When all fields are gathered, confirm with the user and let them know the document is ready to download"""
+## Instructions
+
+1. First, identify which document type the user wants. Ask if unclear.
+   - If they request a document we don't support, explain politely and suggest the closest supported type.
+   - Once determined, set document_type to the exact key above (e.g. "Mutual-NDA", "CSA").
+
+2. Then collect the required fields for that document type, 1-2 questions at a time.
+
+3. Always carry forward previously established values — never set confirmed fields back to null.
+
+4. When all fields are gathered, confirm and tell the user the document is ready to download.
+
+## Fields by document type
+
+Mutual-NDA: party1_name, party1_title, party1_company, party1_email, party2_name, party2_title, party2_company, party2_email, purpose, effective_date (YYYY-MM-DD), mnda_term_years (number), governing_law (US state), jurisdiction (city, state)
+
+CSA: customer_name, provider_name, effective_date, subscription_period (e.g. "1 year"), governing_law, jurisdiction
+
+Pilot-Agreement: customer_name, provider_name, effective_date, pilot_period (e.g. "30 days"), general_cap_amount (e.g. "$10,000"), governing_law, jurisdiction
+
+psa: customer_name, provider_name, effective_date, services_description, payment_terms (e.g. "Net 30"), governing_law, jurisdiction
+
+design-partner-agreement: customer_name, provider_name, effective_date, governing_law, jurisdiction
+
+sla: customer_name, provider_name, effective_date, uptime_target (e.g. "99.9%"), governing_law, jurisdiction
+
+Software-License-Agreement: customer_name, provider_name, effective_date, governing_law, jurisdiction
+
+DPA: customer_name (data controller), provider_name (data processor), effective_date, governing_law
+
+BAA: customer_name (covered entity), provider_name (business associate), effective_date, governing_law
+
+AI-Addendum: customer_name, provider_name, effective_date, governing_law
+
+Partnership-Agreement: customer_name (partner 1), provider_name (partner 2), effective_date, governing_law, jurisdiction
+
+Only populate fields relevant to the detected document type. Set all irrelevant fields to null.
+Always include your conversational reply in the `reply` field."""
 
 
 class ChatMessage(BaseModel):
@@ -42,8 +75,10 @@ class ChatRequest(BaseModel):
     history: list[ChatMessage] = []
 
 
-class NDAResponse(BaseModel):
+class DocumentResponse(BaseModel):
     reply: str
+    document_type: Optional[str] = None
+    # NDA party fields
     party1_name: Optional[str] = None
     party1_title: Optional[str] = None
     party1_company: Optional[str] = None
@@ -52,11 +87,25 @@ class NDAResponse(BaseModel):
     party2_title: Optional[str] = None
     party2_company: Optional[str] = None
     party2_email: Optional[str] = None
-    purpose: Optional[str] = None
+    # Common fields
+    customer_name: Optional[str] = None
+    provider_name: Optional[str] = None
     effective_date: Optional[str] = None
-    mnda_term_years: Optional[str] = None
     governing_law: Optional[str] = None
     jurisdiction: Optional[str] = None
+    # NDA-specific
+    purpose: Optional[str] = None
+    mnda_term_years: Optional[str] = None
+    # CSA
+    subscription_period: Optional[str] = None
+    # Pilot
+    pilot_period: Optional[str] = None
+    general_cap_amount: Optional[str] = None
+    # PSA
+    services_description: Optional[str] = None
+    payment_terms: Optional[str] = None
+    # SLA
+    uptime_target: Optional[str] = None
 
 
 router = APIRouter()
@@ -64,11 +113,11 @@ router = APIRouter()
 
 @router.get("/greeting")
 def greeting():
-    return {"reply": "Hi! I'm here to help you create a Mutual NDA. Let's start with your details — what's your full name and the company you represent?"}
+    return {"reply": "Hi! I'm here to help you create a legal agreement. What type of document would you like to create? For example: Mutual NDA, Cloud Service Agreement, Pilot Agreement, Professional Services Agreement, and more."}
 
 
 @router.post("/message")
-def message(req: ChatRequest) -> NDAResponse:
+def message(req: ChatRequest) -> DocumentResponse:
     messages = [{"role": "system", "content": SYSTEM_PROMPT}]
     for msg in req.history:
         messages.append({"role": msg.role, "content": msg.content})
@@ -77,8 +126,8 @@ def message(req: ChatRequest) -> NDAResponse:
     response = completion(
         model=MODEL,
         messages=messages,
-        response_format=NDAResponse,
+        response_format=DocumentResponse,
         reasoning_effort="low",
         extra_body=EXTRA_BODY,
     )
-    return NDAResponse.model_validate_json(response.choices[0].message.content)
+    return DocumentResponse.model_validate_json(response.choices[0].message.content)
